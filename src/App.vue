@@ -1,19 +1,61 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header :numTotal="numTotal" :numCorrect="numCorrect"></Header>
+    <question-box
+      v-if="questions.length"
+      :currentQuestion="questions[index_question]"
+      :index_question="index_question"
+      :next="next"
+      :increment="increment"
+    />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from "./components/Header";
+import QuestionBox from "./components/QuestionBox";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    Header,
+    QuestionBox,
+  },
+  data() {
+    return {
+      // questions: [{ question: "" }],
+      questions: [],
+      index_question: 0,
+      numCorrect: 0,
+      numTotal: 0,
+    };
+  },
+  methods: {
+    next() {
+      this.index_question += 1;
+    },
+    increment(isCorrect) {
+      if (isCorrect) {
+        this.numCorrect++;
+      }
+      this.numTotal++;
+    },
+  },
+  mounted() {
+    fetch(
+      "https://opentdb.com/api.php?amount=20&category=23&difficulty=easy&type=multiple",
+      {
+        method: "get",
+      }
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((jsonData) => {
+        this.questions = jsonData.results;
+      });
+  },
+};
 </script>
 
 <style>
@@ -22,7 +64,13 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  /* color: #2c3e50; */
+  color: #1d3557;
+  font-weight: 500;
+  /* background: #264653; */
   margin-top: 60px;
 }
+/* body {
+  background: #264653;
+} */
 </style>
